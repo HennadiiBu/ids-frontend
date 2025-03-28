@@ -19,6 +19,11 @@ export const Modal = ({ onClose, children }) => {
     };
   }, [onClose]);
 
+  if (!modalRoot) {
+    console.error('Modal root not found');
+  }
+  
+
   const handleBackdropClick = (e) => {
     if (e.currentTarget === e.target) {
       onClose();

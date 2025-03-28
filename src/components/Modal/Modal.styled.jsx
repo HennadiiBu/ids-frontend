@@ -15,6 +15,7 @@ export const ModalContent = styled.div`
   left: 50%;
   width: 100%;
   min-height: 280px;
+  max-height: 100vh;
   transform: translate(-50%, -50%);
   padding: 48px 24px;
   background-color: #10100f;
@@ -22,12 +23,12 @@ export const ModalContent = styled.div`
   border: 1px solid rgba(239, 237, 232, 0.2);
 
   @media screen and (min-width: 375px) {
-    max-width: 335px;
+    /* max-width: 335px; */
   }
 
   @media screen and (min-width: 768px) {
     min-width: 430px;
-    max-width: 694px;
+    /* max-width: 694px; */
     width: fit-content;
   }
 `;
