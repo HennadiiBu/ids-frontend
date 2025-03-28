@@ -9,8 +9,4 @@ export const Container = styled.div`
 export const Block = styled.div`
   text-align: center;
 `;
-export const Title = styled.h1`
-  color: #000;
-
-`;
 

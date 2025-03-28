@@ -1,11 +1,10 @@
-import { Container, Title, StyledImage } from './HomePage.styled';
-import example from '../../assets/example.png';
+import { Container} from './HomePage.styled';
+import DataTable from '../../DataTable/DataTable';
 
 const HomePage = () => {
   return (
     <Container>
-      <Title>First Page</Title>
-      <StyledImage src={example} alt="Example" />
+      <DataTable />
     </Container>
   );
 };
