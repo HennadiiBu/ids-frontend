@@ -2,14 +2,7 @@ import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchData } from '../redux/data/operations';
 import { selectData, selectIsLoading } from '../redux/data/selectors';
-import {
-  Container,
-  Img,
-  ImgContainer,
-  Item,
-  ItemContainer,
-  List,
-} from './DataTable.styled';
+import { Container, Img, ItemContainer, List } from './DataTable.styled';
 
 const DataTable = () => {
   const dispatch = useDispatch();
