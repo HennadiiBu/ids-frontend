@@ -51,6 +51,9 @@ export const List = styled.ul`
   display: flex;
   flex-direction: column;
   gap: 5px;
+  padding: 20px;
+  border: 1px solid;
+  border-radius: 20px;
 `;
 export const Box = styled.ul`
   display: flex;
