@@ -124,7 +124,8 @@ const DataTable = () => {
                   <div>{key}</div>
                   <SemiContainer>
                     <DataList key={key}>
-                      {ttArray[0]?.verified === true ? (
+                      {ttArray[0]?.verified === true &&
+                      ttArray[0]?.verifiedResult !== '' ? (
                         <div></div>
                       ) : (
                         <fieldset>
