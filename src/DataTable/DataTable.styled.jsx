@@ -7,6 +7,10 @@ export const Container = styled.div`
   justify-content: center;
   gap: 30px;
   width: 90%;
+
+  position: relative;
+
+  margin-top: 180px;
 `;
 
 export const SubContainer = styled.div`
@@ -20,6 +24,8 @@ export const SubContainer = styled.div`
   flex-direction: column;
   width: 100%;
   padding: 10px;
+
+  overflow-x: scroll;
 `;
 
 export const ItemContainer = styled.div`
@@ -54,8 +60,10 @@ export const List = styled.ul`
   padding: 20px;
   border: 1px solid;
   border-radius: 20px;
+
+  /* width: 300px; */
 `;
-export const Box = styled.ul`
+export const Box = styled.div`
   display: flex;
   flex-direction: column;
   gap: 5px;
