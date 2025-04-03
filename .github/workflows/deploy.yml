@@ -4,7 +4,7 @@ on:
   push:
     branches: [main]
 env:
-  VITE_API_PASS: ${{secrets.VITE_API_PASS}}
+  VITE_API_PASS: ${{ secrets.VITE_API_PASS }}
 
 jobs:
   build-and-deploy:
