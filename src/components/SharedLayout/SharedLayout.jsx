@@ -1,12 +1,11 @@
 import { useEffect } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
 
-import { ToastContainer } from 'react-toastify';
 import { Modal } from '../Modal/Modal';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { openModal } from '../../redux/modals/slice';
-import { selectIsAuthenticated, selectToken } from '../../redux/auth/selectors';
+import { selectIsAuthenticated } from '../../redux/auth/selectors';
 import LoginForm from '../LoginForm/LoginForm';
 import { Header } from '../Header/Header';
 
@@ -14,7 +13,6 @@ const SharedLayout = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const isAuthenticated = useSelector(selectIsAuthenticated);
-  const token = useSelector(selectToken);
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -23,11 +21,11 @@ const SharedLayout = () => {
   }, [isAuthenticated, dispatch]);
 
   useEffect(() => {
-    if (!token) {
+    if (!isAuthenticated) {
       navigate('/', { replace: true });
       dispatch(openModal('signIn'));
     }
-  }, [token, navigate, dispatch]);
+  }, [isAuthenticated, navigate, dispatch]);
 
   return (
     <>
@@ -40,17 +38,6 @@ const SharedLayout = () => {
       <main>
         <Outlet />
       </main>
-
-      <ToastContainer
-        autoClose={3000}
-        hideProgressBar={false}
-        newestOnTop={true}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-      />
     </>
   );
 };

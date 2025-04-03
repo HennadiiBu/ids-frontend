@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchData } from '../redux/data/operations';
+
 import { selectData, selectIsLoading } from '../redux/data/selectors';
 import {
   Box,
@@ -18,8 +18,7 @@ import {
 import { Modal } from '../components/Modal/Modal';
 import { closeAllModals, closeModal, openModal } from '../redux/modals/slice';
 import { selectZoomIn } from '../redux/modals/selectors';
-import axios from 'axios';
-import { Bounce, toast, ToastContainer } from 'react-toastify';
+import { updateData } from '../redux/data/slice';
 
 const DataTable = () => {
   const dispatch = useDispatch();
@@ -35,14 +34,9 @@ const DataTable = () => {
   const [selectedFilters, setSelectedFilters] = useState([]);
   const [filteredData, setFilteredData] = useState([...data]);
 
-  const [isVisibleDetails, setIsVisibleDeteils] = useState(false);
+  const [visibleDetails, setVisibleDetails] = useState({}); // Состояние для хранения открытых деталей
 
-  const notify = () => toast('Wow so easy!');
-
-  // Загружаем данные при монтировании компонента
-  useEffect(() => {
-    dispatch(fetchData({})); // Ты можешь передать фильтры сюда
-  }, [dispatch]);
+  const [checkedButtons, setCheckedButtons] = useState({});
 
   // В useEffect загружаем данные в стейт
   useEffect(() => {
@@ -122,6 +116,11 @@ const DataTable = () => {
     });
 
     setNewData(updatedData); // Обновляем локально
+    // Обновляем состояние только для нажатой кнопки
+    setCheckedButtons((prev) => ({
+      ...prev,
+      [`${visitDate}-${key}`]: true, // Кнопка теперь "Перевірено"
+    }));
   };
 
   const handleRadioChange = (visitDate, key, value) => {
@@ -131,29 +130,13 @@ const DataTable = () => {
     }));
   };
 
-  const updateBD = async () => {
-    const batchSize = 100;
-    const totalBatches = Math.ceil(newData.length / batchSize);
-    const requests = [];
-  
-    for (let i = 0; i < totalBatches; i++) {
-      const batch = newData.slice(i * batchSize, (i + 1) * batchSize);
-      requests.push(
-        axios.patch('/api/data/update', { data: batch })
-      );
-    }
-  
-    try {
-      await Promise.all(requests);
-      console.log("Все батчи обновлены");
-      notify();
-    } catch (error) {
-      console.error("Ошибка при обновлении:", error);
-    }
+  const updateReduxData = (newData) => {
+    newData.forEach((item) => {
+      dispatch(updateData(item));
+    });
+
+    alert('Данные обновлены');
   };
-  
- 
-  
 
   const extractFields = (data) => {
     const result = {
@@ -184,17 +167,14 @@ const DataTable = () => {
     return result;
   };
 
-  const handleFilterChange = (event) => {
-    const { name, value } = event.target;
+  // const handleFilterChange = (event) => {
+  //   const { name, value } = event.target;
 
-    setSelectedFilters((prevFilters) => ({
-      ...prevFilters,
-      [name]: value || null, // Если "Выбрати все", то убираем фильтр
-    }));
-  };
-
-  // console.log('selectedFilters', selectedFilters);
-  // console.log('filteredData', filteredData);
+  //   setSelectedFilters((prevFilters) => ({
+  //     ...prevFilters,
+  //     [name]: value || null, // Если "Выбрати все", то убираем фильтр
+  //   }));
+  // };
 
   const temp = () => {
     let tempArr = [];
@@ -224,6 +204,13 @@ const DataTable = () => {
     });
 
     return tempArr;
+  };
+
+  const toggleDetails = (visitDate, key) => {
+    setVisibleDetails((prevState) => ({
+      ...prevState,
+      [`${visitDate}-${key}`]: !prevState[`${visitDate}-${key}`],
+    }));
   };
 
   return (
@@ -260,22 +247,12 @@ const DataTable = () => {
           <p>Загрузка фильтров...</p>
         )}
       </ul> */}
-        <button onClick={updateBD} style={{ height: '60px' }}>
+        <button
+          onClick={() => updateReduxData(newData)}
+          style={{ height: '60px' }}
+        >
           Оновити базу даних
         </button>
-        <ToastContainer
-          position="top-center"
-          autoClose={5000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick={false}
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-          theme="colored"
-          transition={Bounce}
-        />
       </div>
       {filteredData.map((item) => {
         const formattedDate = excelDateToFormattedDate(item.visitDate);
@@ -358,6 +335,18 @@ const DataTable = () => {
                                 <label htmlFor="false">НЕ ОК</label>
                               </div>
                               <button
+                                style={{
+                                  backgroundColor: checkedButtons[
+                                    `${item.visitDate}-${key}`
+                                  ]
+                                    ? 'green'
+                                    : '',
+                                  color: checkedButtons[
+                                    `${item.visitDate}-${key}`
+                                  ]
+                                    ? 'white'
+                                    : '',
+                                }}
                                 onClick={() =>
                                   handleCheckClick(
                                     item.visitDate,
@@ -366,24 +355,34 @@ const DataTable = () => {
                                   )
                                 }
                               >
-                                Перевірити
+                                {checkedButtons[`${item.visitDate}-${key}`]
+                                  ? 'Перевірено'
+                                  : 'Перевірити'}
                               </button>
                             </fieldset>
                           )}
                           <button
-                            onClick={() =>
-                              setIsVisibleDeteils(!isVisibleDetails)
-                            }
+                            onClick={() => toggleDetails(item.visitDate, key)}
                           >
                             Деталі ...
-                            {isVisibleDetails ? (
+                            {visibleDetails[`${item.visitDate}-${key}`] ? (
                               <span>приховати &#x2191; </span>
                             ) : (
                               <span>показати &#x2193;</span>
                             )}
                           </button>
-                          {isVisibleDetails && (
-                            <BoxData>
+                          {visibleDetails[`${item.visitDate}-${key}`] && (
+                            <BoxData
+                              style={{
+                                transition: 'max-height 0.5s ease-out',
+                                maxHeight: visibleDetails[
+                                  `${item.visitDate}-${key}`
+                                ]
+                                  ? '1000px'
+                                  : '0',
+                                overflow: 'hidden',
+                              }}
+                            >
                               <div>
                                 <b>Дивізіон:</b> {ttArray[0].orgStructureRSM}
                               </div>

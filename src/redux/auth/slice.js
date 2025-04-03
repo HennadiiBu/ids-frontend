@@ -6,6 +6,7 @@ const initialState = {
     _id: null,
     email: null,
   },
+  isAuthenticated: false,
   token: '',
   isLoading: false,
 };
@@ -13,6 +14,11 @@ const initialState = {
 const authSlice = createSlice({
   name: 'auth',
   initialState,
+  reducers: {
+    logIn: (state) => {
+      state.isAuthenticated = true;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(signup.pending, (state) => {
@@ -55,5 +61,7 @@ const authSlice = createSlice({
       });
   },
 });
+
+export const {  logIn } = authSlice.actions;
 
 export const authReducer = authSlice.reducer;
