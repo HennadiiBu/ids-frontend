@@ -1,9 +1,10 @@
 import { Route, Routes } from 'react-router-dom';
 import SharedLayout from 'components/SharedLayout/SharedLayout';
 import HomePage from 'pages/HomePage/HomePage';
-import UploadPage from 'pages/UploadPage/UploadPage';
+
 import ErrorPage from 'pages/ErrorPage/ErrorPage';
 import { AppWrapper } from './App.styled';
+import UploadPage from './pages/UploadPage/UploadPage';
 
 function App() {
   return (

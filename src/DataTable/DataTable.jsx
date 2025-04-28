@@ -19,6 +19,8 @@ import { Modal } from '../components/Modal/Modal';
 import { closeAllModals, closeModal, openModal } from '../redux/modals/slice';
 import { selectZoomIn } from '../redux/modals/selectors';
 import { updateData } from '../redux/data/slice';
+import UpdDataBtn from './UpdDataBtn';
+
 
 const DataTable = () => {
   const dispatch = useDispatch();
@@ -37,6 +39,10 @@ const DataTable = () => {
   const [visibleDetails, setVisibleDetails] = useState({}); // Состояние для хранения открытых деталей
 
   const [checkedButtons, setCheckedButtons] = useState({});
+
+  useEffect(() => {
+    filteredData
+  },[filteredData])
 
   // В useEffect загружаем данные в стейт
   useEffect(() => {
@@ -97,6 +103,7 @@ const DataTable = () => {
 
   const handleCheckClick = async (visitDate, key, selected) => {
     if (!selected) return; // Если ничего не выбрано, не отправляем запрос
+
 
     const updatedData = data.map((item) => {
       if (item.visitDate === visitDate && item.ttNumbers[key]) {
@@ -215,19 +222,20 @@ const DataTable = () => {
 
   return (
     <Container>
-      <div
+      {/* <div
         style={{
           position: 'fixed',
-          top: '100px',
+          top: '60px',
           width: '100%',
-          height: '100px',
+          // height: '100px',
           backgroundColor: 'gray',
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
+          padding: '10px 0',
         }}
-      >
-        {/* <ul>
+      > */}
+      {/* <ul>
         {filters && Object.keys(filters).length > 0 ? (
           Object.keys(filters).map((elem, index) => (
             <li key={index}>
@@ -247,218 +255,232 @@ const DataTable = () => {
           <p>Загрузка фильтров...</p>
         )}
       </ul> */}
-        <button
+      {/* <button
           onClick={() => updateReduxData(newData)}
-          style={{ height: '60px' }}
+          style={{
+            height: '30px',
+            padding: '10px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+         
+          
+            borderRadius: '5px',
+          }}
         >
           Оновити базу даних
-        </button>
-      </div>
-      {filteredData.map((item) => {
-        const formattedDate = excelDateToFormattedDate(item.visitDate);
-        const tempData = temp();
-        return (
-          <SubContainer key={item._id}>
-            <div style={{ fontWeight: '700', fontSize: '32px' }}>
-              {formattedDate}
-            </div>
-            <ItemContainer>
-              {Object.entries(item.ttNumbers).map(([key, ttArray]) => {
-                const isKeyInTemp = tempData.some(
-                  (tempItem) =>
-                    tempItem.date === formattedDate &&
-                    tempItem.keys.includes(key)
-                );
-                return isKeyInTemp ? (
-                  <div key={key}>
-                    <List key={key}>
-                      <div style={{ fontSize: '32px', fontWeight: '700' }}>
-                        {key}
-                      </div>
-                      <SemiContainer>
-                        <DataList key={key}>
-                          {ttArray[0]?.verified === true &&
-                          ttArray[0]?.verifiedResult !== '' &&
-                          ttArray[0]?.verifiedResult !== '(пусто)' ? (
-                            <div></div>
-                          ) : (
-                            <fieldset
-                              style={{
-                                display: 'flex',
-                                gap: '15px',
-                                alignItems: 'center',
-                              }}
-                            >
-                              <legend>Перевірка фото:</legend>
-
-                              <div>
-                                <input
-                                  type="radio"
-                                  id={`true-${key}`}
-                                  name={`photoCheck-${key}-${item.visitDate}`}
-                                  value="ок"
-                                  style={{ marginRight: '5px' }}
-                                  checked={
-                                    selected[`${item.visitDate}-${key}`] ===
-                                    'ок'
-                                  }
-                                  onChange={(e) =>
-                                    handleRadioChange(
-                                      item.visitDate,
-                                      key,
-                                      e.target.value
-                                    )
-                                  }
-                                />
-                                <label htmlFor="true">ОК</label>
-                              </div>
-
-                              <div>
-                                <input
-                                  type="radio"
-                                  id={`false-${key}`}
-                                  name={`photoCheck-${key}-${item.visitDate}`}
-                                  value="не ок"
-                                  style={{ marginRight: '5px' }}
-                                  checked={
-                                    selected[`${item.visitDate}-${key}`] ===
-                                    'не ок'
-                                  }
-                                  onChange={(e) =>
-                                    handleRadioChange(
-                                      item.visitDate,
-                                      key,
-                                      e.target.value
-                                    )
-                                  }
-                                />
-                                <label htmlFor="false">НЕ ОК</label>
-                              </div>
-                              <button
-                                style={{
-                                  backgroundColor: checkedButtons[
-                                    `${item.visitDate}-${key}`
-                                  ]
-                                    ? 'green'
-                                    : '',
-                                  color: checkedButtons[
-                                    `${item.visitDate}-${key}`
-                                  ]
-                                    ? 'white'
-                                    : '',
-                                }}
-                                onClick={() =>
-                                  handleCheckClick(
-                                    item.visitDate,
-                                    key,
-                                    selected[`${item.visitDate}-${key}`]
-                                  )
-                                }
-                              >
-                                {checkedButtons[`${item.visitDate}-${key}`]
-                                  ? 'Перевірено'
-                                  : 'Перевірити'}
-                              </button>
-                            </fieldset>
-                          )}
-                          <button
-                            onClick={() => toggleDetails(item.visitDate, key)}
-                          >
-                            Деталі ...
-                            {visibleDetails[`${item.visitDate}-${key}`] ? (
-                              <span>приховати &#x2191; </span>
+        </button> */}
+      {/* </div> */}
+      {filteredData && (
+        <UpdDataBtn newData={newData} updateReduxData={updateReduxData} />
+      )}
+      <>
+        {filteredData.map((item) => {
+          const formattedDate = excelDateToFormattedDate(item.visitDate);
+          const tempData = temp();
+          return (
+            <SubContainer key={item._id}>
+              <div style={{ fontWeight: '700', fontSize: '32px' }}>
+                {formattedDate}
+              </div>
+              <ItemContainer>
+                {Object.entries(item.ttNumbers).map(([key, ttArray]) => {
+                  const isKeyInTemp = tempData.some(
+                    (tempItem) =>
+                      tempItem.date === formattedDate &&
+                      tempItem.keys.includes(key)
+                  );
+                  return isKeyInTemp ? (
+                    <div key={key}>
+                      <List key={key}>
+                        <div style={{ fontSize: '32px', fontWeight: '700' }}>
+                          {key}
+                        </div>
+                        <SemiContainer>
+                          <DataList key={key}>
+                            {ttArray[0]?.verified === true &&
+                            ttArray[0]?.verifiedResult !== '' &&
+                            ttArray[0]?.verifiedResult !== '(пусто)' ? (
+                              <div></div>
                             ) : (
-                              <span>показати &#x2193;</span>
+                              <fieldset
+                                style={{
+                                  display: 'flex',
+                                  gap: '15px',
+                                  alignItems: 'center',
+                                }}
+                              >
+                                <legend>Перевірка фото:</legend>
+
+                                <div>
+                                  <input
+                                    type="radio"
+                                    id={`true-${key}`}
+                                    name={`photoCheck-${key}-${item.visitDate}`}
+                                    value="ок"
+                                    style={{ marginRight: '5px' }}
+                                    checked={
+                                      selected[`${item.visitDate}-${key}`] ===
+                                      'ок'
+                                    }
+                                    onChange={(e) =>
+                                      handleRadioChange(
+                                        item.visitDate,
+                                        key,
+                                        e.target.value
+                                      )
+                                    }
+                                  />
+                                  <label htmlFor="true">ОК</label>
+                                </div>
+
+                                <div>
+                                  <input
+                                    type="radio"
+                                    id={`false-${key}`}
+                                    name={`photoCheck-${key}-${item.visitDate}`}
+                                    value="не ок"
+                                    style={{ marginRight: '5px' }}
+                                    checked={
+                                      selected[`${item.visitDate}-${key}`] ===
+                                      'не ок'
+                                    }
+                                    onChange={(e) =>
+                                      handleRadioChange(
+                                        item.visitDate,
+                                        key,
+                                        e.target.value
+                                      )
+                                    }
+                                  />
+                                  <label htmlFor="false">НЕ ОК</label>
+                                </div>
+                                <button
+                                  style={{
+                                    backgroundColor: checkedButtons[
+                                      `${item.visitDate}-${key}`
+                                    ]
+                                      ? 'green'
+                                      : '',
+                                    color: checkedButtons[
+                                      `${item.visitDate}-${key}`
+                                    ]
+                                      ? 'white'
+                                      : '',
+                                  }}
+                                  onClick={() =>
+                                    handleCheckClick(
+                                      item.visitDate,
+                                      key,
+                                      selected[`${item.visitDate}-${key}`]
+                                    )
+                                  }
+                                >
+                                  {checkedButtons[`${item.visitDate}-${key}`]
+                                    ? 'Перевірено'
+                                    : 'Перевірити'}
+                                </button>
+                              </fieldset>
                             )}
-                          </button>
-                          {visibleDetails[`${item.visitDate}-${key}`] && (
-                            <BoxData
-                              style={{
-                                transition: 'max-height 0.5s ease-out',
-                                maxHeight: visibleDetails[
-                                  `${item.visitDate}-${key}`
-                                ]
-                                  ? '1000px'
-                                  : '0',
-                                overflow: 'hidden',
-                              }}
+                            <button
+                              onClick={() => toggleDetails(item.visitDate, key)}
                             >
-                              <div>
-                                <b>Дивізіон:</b> {ttArray[0].orgStructureRSM}
-                              </div>
-                              <div>
-                                <b>Регіон:</b> {ttArray[0].orgStructureTSM}
-                              </div>
-                              <div>
-                                <b>ТС:</b> {ttArray[0].orgStructureSUP}
-                              </div>
-                              <div>
-                                <b>Маршрут:</b> {ttArray[0].orgStructureTP}
-                              </div>
-                              <div>
-                                <b>Мережа:</b> {ttArray[0].ttNetwork}
-                              </div>
-                              <div>
-                                <b>ТТ Назва:</b> {ttArray[0].ttActualName}
-                              </div>
-                              <div>
-                                <b>ТТ Адреса:</b> {ttArray[0].ttActualAddress}
-                              </div>
-                              <div>
-                                <b>ТТ Тип:</b> {ttArray[0].ttSubtype}
-                              </div>
-                              <div>
-                                <b>ТТ Сегмент:</b> {ttArray[0].ttComment}
-                              </div>
-                              <div>{ttArray[0].ttAdditionalId}</div>
-                            </BoxData>
-                          )}
-                          <div style={{ display: 'flex', gap: '10px' }}>
-                            {ttArray.map((tt, index) => (
-                              <Box
-                                key={index}
-                                style={{ display: 'flex', gap: '10px' }}
+                              Деталі ...
+                              {visibleDetails[`${item.visitDate}-${key}`] ? (
+                                <span>приховати &#x2191; </span>
+                              ) : (
+                                <span>показати &#x2193;</span>
+                              )}
+                            </button>
+                            {visibleDetails[`${item.visitDate}-${key}`] && (
+                              <BoxData
+                                style={{
+                                  transition: 'max-height 0.5s ease-out',
+                                  maxHeight: visibleDetails[
+                                    `${item.visitDate}-${key}`
+                                  ]
+                                    ? '1000px'
+                                    : '0',
+                                  overflow: 'hidden',
+                                }}
                               >
                                 <div>
-                                  {tt.surveyPage === 'ФОТО-звіт анонсу ПРОМО'
-                                    ? ''
-                                    : tt.surveyAnswer === '(пусто)'
-                                    ? '0'
-                                    : `${tt.surveyElement} - ${tt.surveyAnswer}`}
+                                  <b>Дивізіон:</b> {ttArray[0].orgStructureRSM}
                                 </div>
-                                {tt.surveyContentLink === '' ? (
-                                  ''
-                                ) : (
-                                  <ImgContainer>
-                                    <Text>{tt.surveyElement}</Text>
-                                    <button
-                                      onClick={() => {
-                                        handleOpenImage();
-                                        setLink(tt.surveyContentLink);
-                                      }}
-                                    >
-                                      <Img
-                                        src={tt.surveyContentLink}
-                                        alt={tt.surveyContentLink}
-                                      />
-                                    </button>
-                                  </ImgContainer>
-                                )}
-                              </Box>
-                            ))}
-                          </div>
-                        </DataList>
-                      </SemiContainer>
-                    </List>
-                  </div>
-                ) : (
-                  ''
-                );
-              })}
-            </ItemContainer>
-          </SubContainer>
-        );
-      })}
+                                <div>
+                                  <b>Регіон:</b> {ttArray[0].orgStructureTSM}
+                                </div>
+                                <div>
+                                  <b>ТС:</b> {ttArray[0].orgStructureSUP}
+                                </div>
+                                <div>
+                                  <b>Маршрут:</b> {ttArray[0].orgStructureTP}
+                                </div>
+                                <div>
+                                  <b>Мережа:</b> {ttArray[0].ttNetwork}
+                                </div>
+                                <div>
+                                  <b>ТТ Назва:</b> {ttArray[0].ttActualName}
+                                </div>
+                                <div>
+                                  <b>ТТ Адреса:</b> {ttArray[0].ttActualAddress}
+                                </div>
+                                <div>
+                                  <b>ТТ Тип:</b> {ttArray[0].ttSubtype}
+                                </div>
+                                <div>
+                                  <b>ТТ Сегмент:</b> {ttArray[0].ttComment}
+                                </div>
+                                <div>{ttArray[0].ttAdditionalId}</div>
+                              </BoxData>
+                            )}
+                            <div style={{ display: 'flex', gap: '10px' }}>
+                              {ttArray.map((tt, index) => (
+                                <Box
+                                  key={index}
+                                  style={{ display: 'flex', gap: '10px' }}
+                                >
+                                  <div>
+                                    {tt.surveyPage === 'ФОТО-звіт анонсу ПРОМО'
+                                      ? ''
+                                      : tt.surveyAnswer === '(пусто)'
+                                      ? '0'
+                                      : `${tt.surveyElement} - ${tt.surveyAnswer}`}
+                                  </div>
+                                  {tt.surveyContentLink === '' ? (
+                                    ''
+                                  ) : (
+                                    <ImgContainer>
+                                      <Text>{tt.surveyElement}</Text>
+                                      <button
+                                        onClick={() => {
+                                          handleOpenImage();
+                                          setLink(tt.surveyContentLink);
+                                        }}
+                                      >
+                                        <Img
+                                          src={tt.surveyContentLink}
+                                          alt={tt.surveyContentLink}
+                                        />
+                                      </button>
+                                    </ImgContainer>
+                                  )}
+                                </Box>
+                              ))}
+                            </div>
+                          </DataList>
+                        </SemiContainer>
+                      </List>
+                    </div>
+                  ) : (
+                    ''
+                  );
+                })}
+              </ItemContainer>
+            </SubContainer>
+          );
+        })}
+      </>
       {isZoomModalOpen && (
         <Modal onClose={handleCloseModal}>
           <ZoomImg link={link} />

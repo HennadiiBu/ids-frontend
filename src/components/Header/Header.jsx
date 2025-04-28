@@ -1,3 +1,5 @@
+
+
 import {
   HeaderContainer,
   Navigation,
@@ -20,9 +22,10 @@ export const Header = () => {
           <IconWrapper>
             <use href={`${sprite}#icon-logo`} />
           </IconWrapper>
-          Second
+          Upload file
         </StyledLink>
       </Navigation>
+
     </HeaderContainer>
   );
 };
